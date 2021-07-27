@@ -1,4 +1,7 @@
-# RbxReplicatedTweening
+#DO NOT USE!
+##Currently being rewritten!
+
+## RbxReplicatedTweening
 A service similar to TweenService but it runs tweens on both server and client, this helps it play nice with systems ran on the server like NPCs or AntiExploit while also looking nice and smooth on the client side. This is not a perfect recreation of TweenService but it is good enough.
 
 ## Setup
