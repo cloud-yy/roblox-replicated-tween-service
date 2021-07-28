@@ -1,8 +1,8 @@
-# RbxReplicatedTweening
+# RbxReplicatedTweenService
 A service similar to TweenService but it runs tweens on both server and client, this helps it play nice with systems ran on the server like NPCs or AntiExploit while also looking nice and smooth on the client side. This is not a perfect recreation of TweenService but it is good enough.
 
 ## Setup
-Require Replicated Tweening on both server and client with ```require(Path.To.ReplicatedTweening)```.
+Require Replicated Tweening on both server and client with ```require(Path.To.ReplicatedTweenService)```.
 
 ## Tween Methods:
 Create a tween object:
@@ -25,7 +25,7 @@ Tween:Cancel()
 ## Example
 Creating, playing, pausing and resuming a tween:
 ```lua
-local Module = require(Path.To.ReplicatedTweening)
+local Module = require(Path.To.ReplicatedTweenService)
 local Tween = Module:Create(game.Workspace.Part, TweenInfo.new(2), {Position = Vector3.new(0,0,0))
 
 Tween:Play()
