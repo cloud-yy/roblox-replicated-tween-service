@@ -20,10 +20,10 @@ while also looking nice and smooth on the client side. This is not a perfect rec
 
 Documentation: 
 SERVER
-local ReplicatedTweening = require(ReplicatedTweening)
-    Starts ReplicatedTweening on the server.
+local ReplicatedTweenService = require(ReplicatedTweenService)
+    Starts ReplicatedTweenService on the server.
 
-local Tween = ReplicatedTweening.new(Object, Info, Goal)
+local Tween = ReplicatedTweenService.new(Object, Info, Goal)
     Tween:Play()
         Plays or resumes the tween.
 
@@ -34,7 +34,7 @@ local Tween = ReplicatedTweening.new(Object, Info, Goal)
         Cancels the tween.
 
 CLIENT
-require(ReplicatedTweening)
+require(ReplicatedTweenService)
 Starts Replicated Tweening on the client.
 
 ]]--
