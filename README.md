@@ -9,11 +9,11 @@ Create a tween object:
 ```lua
 local Tween = Module:Create(Object, TweenInfo, Goal)
 ```
-Play or resumes a tween:
+Play or resumes the tween:
 ```lua
 Tween:Play()
 ```
-Stops a tween:
+Stop the tween:
 ```lua
 Tween:Stop()
 ```
@@ -21,7 +21,7 @@ Pause a tween unless overrided:
 ```lua
 Tween:Pause()
 ```
-Cancels the tween:
+Cancel the tween:
 ```lua
 Tween:Cancel()
 ```
