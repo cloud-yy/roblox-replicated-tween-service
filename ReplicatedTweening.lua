@@ -27,9 +27,6 @@ local Tween = ReplicatedTweening.new(Object, Info, Goal)
     Tween:Play()
         Plays or resumes the tween.
 
-    Tween:Stop()
-        Stops the tween.
-
     Tween:Pause()
         Pauses the tween to be played later.
 
@@ -46,7 +43,7 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
-local Intents = {New = 1, Sync = 2, Play = 3, Stop = 4, Pause = 5, Cancel = 6}
+local Intents = {New = 1, Sync = 2, Play = 3, Pause = 4, Cancel = 5}
 local Tweens = {}
 local Event
 
@@ -98,11 +95,6 @@ if RunService:IsServer() then
         self._tween:Play()
         Event:FireAllClients(Intents.Play, self._id)
     end
-    
-    function ReplicatedTweenService:Stop()
-        self._tween:Stop()
-        Event:FireAllClients(Intents.Stop, self._id)
-    end
 
     function ReplicatedTweenService:Pause()
         self._tween:Pause()
@@ -130,12 +122,6 @@ else
             local Tween = Tweens[Args[1]]
             if Tween then
                 Tween:Play()
-            end
-
-        elseif Intent == Intents.Stop then
-            local Tween = Tweens[Args[1]]
-            if Tween then
-                Tween:Stop()
             end
 
         elseif Intent == Intents.Pause then
