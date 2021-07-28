@@ -13,10 +13,6 @@ Play or resumes the tween:
 ```lua
 Tween:Play()
 ```
-Stop the tween:
-```lua
-Tween:Stop()
-```
 Pause a tween unless overrided:
 ```lua
 Tween:Pause()
