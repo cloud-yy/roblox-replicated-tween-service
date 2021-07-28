@@ -1,7 +1,4 @@
-# DO NOT USE!
-Currently being rewritten!
-
-## RbxReplicatedTweening
+# RbxReplicatedTweening
 A service similar to TweenService but it runs tweens on both server and client, this helps it play nice with systems ran on the server like NPCs or AntiExploit while also looking nice and smooth on the client side. This is not a perfect recreation of TweenService but it is good enough.
 
 ## Setup
@@ -16,13 +13,17 @@ Play or resumes a tween:
 ```lua
 Tween:Play()
 ```
+Stops a tween:
+```lua
+Tween:Stop()
+```
 Pause a tween unless overrided:
 ```lua
 Tween:Pause()
 ```
-Fully cancel and stop a tween:
+Cancels the tween:
 ```lua
-Tween:Stop()
+Tween:Cancel()
 ```
 
 ## Example
