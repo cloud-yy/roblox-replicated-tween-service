@@ -21,6 +21,10 @@ Cancel the tween:
 ```lua
 Tween:Cancel()
 ```
+Destroy the tween:
+```lua
+Tween:Destroy()
+```
 
 ## Example
 Creating, playing, pausing and resuming a tween:
