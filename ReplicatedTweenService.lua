@@ -13,37 +13,32 @@
 -- Date: Tuesday, July 27 2021
 
 --[[
-
 Description: 
 A service similar to TweenService but it runs tweens on both server and client, this helps it play nice with systems ran on the server like NPCs or AntiExploit-
 while also looking nice and smooth on the client side. This is not a perfect recreation of TweenService but it is good enough.
-
 Documentation: 
 SERVER
 local ReplicatedTweenService = require(ReplicatedTweenService)
     Starts ReplicatedTweenService on the server.
-
 local Tween = ReplicatedTweenService.new(Object, Info, Goal)
     Tween:Play()
         Plays or resumes the tween.
-
     Tween:Pause()
         Pauses the tween to be played later.
-
     Tween:Cancel()
         Cancels the tween.
-
+    Tween:Destroy()
+        Cleans up/destroys the tween. Should use once a tween is done.
 CLIENT
 require(ReplicatedTweenService)
 Starts Replicated Tweening on the client.
-
 ]]--
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
-local Intents = {New = 1, Sync = 2, Play = 3, Pause = 4, Cancel = 5}
+local Intents = {New = 1, Sync = 2, Play = 3, Pause = 4, Cancel = 5, Destroy = 6}
 local Tweens = {}
 local Event
 
@@ -105,6 +100,11 @@ if RunService:IsServer() then
         self._tween:Cancel()
         Event:FireAllClients(Intents.Cancel, self._id)
     end
+
+    function ReplicatedTweenService:Destroy()
+        Event:FireAllClients(Intents.Destroy, self._id)
+        Tweens[self._id] = nil
+    end
 else
     Event = script:WaitForChild("RemoteEvent")
 
@@ -134,6 +134,11 @@ else
             local Tween = Tweens[Args[1]]
             if Tween then
                 Tween:Cancel()
+            end
+
+        elseif Intent == Intent.Destroy then
+            if Tweens[Args[1]] then
+                Tweens[Args[1]] = nil
             end
         end
     end)
