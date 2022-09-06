@@ -7,7 +7,7 @@ Require Replicated Tweening on both server and client with ```require(Path.To.Re
 ## Tween Methods:
 Create a tween object:
 ```lua
-local Tween = Module:Create(Object, TweenInfo, Goal)
+local Tween = Module:Create(object, tweenInfo, goal)
 ```
 Play or resumes the tween:
 ```lua
@@ -33,8 +33,10 @@ local Module = require(Path.To.ReplicatedTweenService)
 local Tween = Module:Create(game.Workspace.Part, TweenInfo.new(2), {Position = Vector3.new(0,0,0))
 
 Tween:Play()
-wait(1)
+task.wait(1)
 Tween:Pause()
-wait(1)
+task.wait(1)
 Tween:Play()
+task.wait(2)
+Tween:Destroy()
 ```
