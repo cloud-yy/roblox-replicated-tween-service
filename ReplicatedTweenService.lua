@@ -1,3 +1,5 @@
+--!strict
+
 --[[
 ░█████╗░██╗░░░░░░█████╗░██╗░░░██╗██████╗░
 ██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗
@@ -10,17 +12,18 @@
 
 -- Name: ReplicatedTweenService
 -- By: cloud_yy
--- Date: Tuesday, July 27 2021
+-- Date: Tuesday, September 6 2022
 
 --[[
 Description: 
 A service similar to TweenService but it runs tweens on both server and client, this helps it play nice with systems ran on the server like NPCs or AntiExploit-
 while also looking nice and smooth on the client side. This is not a perfect recreation of TweenService but it is good enough.
+
 Documentation: 
 SERVER
 local ReplicatedTweenService = require(ReplicatedTweenService)
     Starts ReplicatedTweenService on the server.
-local Tween = ReplicatedTweenService.new(Object, Info, Goal)
+local Tween = ReplicatedTweenService.new(object, info, goal)
     Tween:Play()
         Plays or resumes the tween.
     Tween:Pause()
@@ -38,28 +41,36 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
-local Intents = {New = 1, Sync = 2, Play = 3, Pause = 4, Cancel = 5, Destroy = 6}
 local Tweens = {}
-local Event
+local Event: RemoteEvent
 
-local function InfoToTable(Info)
-	local Table = {}
-	Table[1] = Info.Time or 1 
-	Table[2] = Info.EasingStyle or Enum.EasingStyle.Quad
-	Table[3] = Info.EasingDirection or Enum.EasingDirection.Out
-	Table[4] = Info.RepeatCount or 0
-	Table[5] = Info.Reverses or false
-	Table[6] = Info.DelayTime or 0
-	return Table
+local INTENTS = {
+    New = 1,
+    Sync = 2,
+    Play = 3,
+    Pause = 4,
+    Cancel = 5,
+    Destroy = 6
+}
+
+local function infoToTable(info: TweenInfo): table
+	local table: table = {}
+	table[1] = info.Time or 1 
+	table[2] = info.EasingStyle or Enum.EasingStyle.Quad
+	table[3] = info.EasingDirection or Enum.EasingDirection.Out
+	table[4] = info.RepeatCount or 0
+	table[5] = info.Reverses or false
+	table[6] = info.DelayTime or 0
+	return table
 end
 
-local function TableToInfo(Table)
-	return TweenInfo.new(unpack(Table))
+local function tableToInfo(table): TweenInfo
+	return TweenInfo.new(unpack(table))
 end
 
-local function CreateLocalTween(Id, Object, Info, Goal)
-    local Tween = TweenService:Create(Object, TableToInfo(Info), Goal)
-    Tweens[Id] = Tween
+local function createLocalTween(id, object, info, goal)
+    local tween = TweenService:Create(object, TableToInfo(info), goal)
+    Tweens[id] = tween
 end
 
 local ReplicatedTweenService = {}
@@ -67,86 +78,88 @@ local ReplicatedTweenService = {}
 if RunService:IsServer() then
     Event = Instance.new("RemoteEvent",script)
 
-    Event.OnServerEvent:Connect(function(Player,Intent)
-        if Intent == Intents.Sync then
-            Event:FireClient(Player,Tweens)
+    Event.OnServerEvent:Connect(function(player: Player, intent: String)
+        if intent == INTENTS.Sync then
+            Event:FireClient(player, Tweens)
         end
     end)
 
     ReplicatedTweenService.__index = ReplicatedTweenService
     
-    function ReplicatedTweenService:Create(Object, Info, Goal)
+    function ReplicatedTweenService:Create(object: Instance, info: TweenInfo, goal: Table)
         local self = setmetatable({}, ReplicatedTweenService)
 
-        self._id = HttpService:GenerateGUID()
-        self._tween = TweenService:Create(Object, Info, Goal)
+        self._id: String = HttpService:GenerateGUID()
+        self._tween: Tween = TweenService:Create(Object, Info, Goal)
 
-        Tweens[self._id] = {Object, InfoToTable(Info), Goal}
-        Event:FireAllClients(Intents.New, self._id, Object, InfoToTable(Info), Goal)
+        Tweens[self._id] = {object, InfoToTable(info), goal}
+        Event:FireAllClients(INTENTS.New, self._id, object, infoToTable(info), goal)
+
         return self
     end
     
     function ReplicatedTweenService:Play()
         self._tween:Play()
-        Event:FireAllClients(Intents.Play, self._id)
+        Event:FireAllClients(INTENTS.Play, self._id)
     end
 
     function ReplicatedTweenService:Pause()
         self._tween:Pause()
-        Event:FireAllClients(Intents.Pause, self._id)
+        Event:FireAllClients(INTENTS.Pause, self._id)
     end
 
     function ReplicatedTweenService:Cancel()
         self._tween:Cancel()
-        Event:FireAllClients(Intents.Cancel, self._id)
+        Event:FireAllClients(INTENTS.Cancel, self._id)
     end
 
     function ReplicatedTweenService:Destroy()
-        Event:FireAllClients(Intents.Destroy, self._id)
+        Event:FireAllClients(INTENTS.Destroy, self._id)
         Tweens[self._id] = nil
     end
 else
     Event = script:WaitForChild("RemoteEvent")
 
-    Event.OnClientEvent:Connect(function(Intent,...)
-        local Args = {...}
-        if Intent == Intents.New then
-            CreateLocalTween(...)
+    Event.OnClientEvent:Connect(function(Intent: number, ...)
+        local args: table = {...}
 
-        elseif Intent == Intents.Sync then
-            for Id,Tween in pairs(Args[1]) do
-                CreateLocalTween(Id,Tween[1],Tween[2],Tween[3])
+        if intent == INTENTS.New then
+            createLocalTween(...)
+
+        elseif intent == INTENTS.Sync then
+            for id, tween in pairs(args[1]) do
+                createLocalTween(id, tween[1], tween[2], tween[3])
             end
 
-        elseif Intent == Intents.Play then
-            local Tween = Tweens[Args[1]]
-            if Tween then
-                Tween:Play()
+        elseif intent == INTENTS.Play then
+            local tween = Tweens[Args[1]]
+            if tween then
+                tween:Play()
             end
 
-        elseif Intent == Intents.Pause then
-            local Tween = Tweens[Args[1]]
-            if Tween then
-                Tween:Pause()
+        elseif intent == INTENTS.Pause then
+            local tween = Tweens[Args[1]]
+            if tween then
+                tween:Pause()
             end
 
-        elseif Intent == Intents.Cancel then
-            local Tween = Tweens[Args[1]]
-            if Tween then
-                Tween:Cancel()
+        elseif intent == INTENTS.Cancel then
+            local tween = Tweens[Args[1]]
+            if tween then
+                tween:Cancel()
             end
 
-        elseif Intent == Intent.Destroy then
-            if Tweens[Args[1]] then
-                Tweens[Args[1]] = nil
+        elseif intent == INTENTS.Destroy then
+            if tweens[Args[1]] then
+                tweens[Args[1]] = nil
             end
         end
     end)
 
-    Event:FireServer(Intents.Sync)
+    Event:FireServer(INTENTS.Sync)
 end
 
 return ReplicatedTweenService
 
 -- ReplicatedTweenService
--- © 2021 cloud_yy
+-- © 2022 cloud_yy
