@@ -34,9 +34,12 @@ local Tween = Module:Create(game.Workspace.Part, TweenInfo.new(2), {Position = V
 
 Tween:Play()
 task.wait(1)
+
 Tween:Pause()
 task.wait(1)
+
 Tween:Play()
 task.wait(2)
+
 Tween:Destroy()
 ```
